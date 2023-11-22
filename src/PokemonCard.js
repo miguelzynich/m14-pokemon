@@ -1,7 +1,4 @@
-import axios from 'axios'
-import React, { useState } from 'react'
-
-export const PokemonCard = ({
+const PokemonCard = ({
   id,
   name,
   image,
@@ -9,85 +6,74 @@ export const PokemonCard = ({
   createPokemon,
   setCreatePokemon,
   updateList,
-  setUpdateList
+  setUpdateList,
 }) => {
-  const [editPokemon, setEditPokemon] = useState(createPokemon ?? false)
-  const [nameInput, setNameInput] = useState(name ?? '')
-  const [imageUrlInput, setImageUrlInput] = useState(image ?? '')
-  const [evolutionInput, setEvolutionInput] = useState(
-    evolution?.toString() ?? ''
-  )
+  const [editPokemon, setEditPokemon] = useState(createPokemon ?? false);
+  const [showNewPokemonCard, setShowNewPokemonCard] = useState(false);
 
-  const handleChangePokemon = () => {
-    if (createPokemon) {
-      axios.post('http://localhost:4000/new-pokemon', {
-        name: nameInput,
-        imageUrl: imageUrlInput,
-        evolution: Number(evolutionInput)
-      })
-      setCreatePokemon(false)
-    } else {
-      axios.put(`http://localhost:4000/update-pokemon/${id}`, {
-        name: nameInput,
-        imageUrl: imageUrlInput,
-        evolution: Number(evolutionInput)
-      })
-      setEditPokemon(false)
+  const handleAddPokemon = async () => {
+    try {
+      const response = await axios.post('http://localhost:4000/new-pokemon', {
+        name: 'Novo Pokémon',
+        imageUrl: 'URL_DA_IMAGEM',
+        evolution: 1,
+      });
+
+      if (response.status === 201) {
+        setCreatePokemon(false);
+        setUpdateList(updateList + 1);
+        setShowNewPokemonCard(true);
+      } else {
+        console.error('Erro ao adicionar Pokémon:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Erro ao adicionar Pokémon:', error.message);
     }
-    setUpdateList(updateList + 1)
-  }
+  };
+
+  const handleSave = (data) => {
+    // ... (sua lógica de salvar)
+  };
 
   const handleDeletePokemon = () => {
-    axios.delete(`http://localhost:4000/delete-pokemon/${id}`)
-    setUpdateList(updateList + 1)
-  }
+    // ... (sua lógica de deletar)
+  };
 
   return (
     <div className="pokemon-card">
       {editPokemon ? (
-        <div>
-          <label>
-            Nome:
-            <input
-              type="text"
-              onChange={e => setNameInput(e.target.value)}
-              value={nameInput}
-            />
-          </label>
-          <label>
-            Url da imagem:
-            <input
-              type="text"
-              onChange={e => setImageUrlInput(e.target.value)}
-              value={imageUrlInput}
-            />
-          </label>
-          <label>
-            Estágio de evolução:
-            <input
-              type="number"
-              onChange={e => setEvolutionInput(e.target.value)}
-              value={evolutionInput}
-            />
-          </label>
-          <button
-            onClick={() =>
-              createPokemon ? setCreatePokemon(false) : setEditPokemon(false)
-            }
-          >
-            Cancela
-          </button>
-          <button onClick={handleChangePokemon}>Confirma</button>
-        </div>
+        <PokemonEditForm
+          name={name}
+          image={image}
+          evolution={evolution}
+          onCancel={() =>
+            createPokemon ? setCreatePokemon(false) : setEditPokemon(false)
+          }
+          onSave={handleSave}
+        />
       ) : (
         <>
-          <h2>{name}</h2>
-          <img src={image} alt={name} />
-          <h3>Estágio de evolução: {evolution}</h3>
-          <button onClick={() => setEditPokemon(true)}>Alterar</button>
-          <button onClick={handleDeletePokemon}>Remover</button>
-        </>
+          <PokemonDisplay
+            name={name}
+            image={image}
+            evolution={evolution}
+            onEdit={() => setEditPokemon(true)}
+            onDelete={handleDeletePokemon}
+          />
+          {showNewPokemonCard && (
+            <PokemonDisplay
+              name="Novo Pokémon"
+              image="URL_DA_IMAGEM"
+              evolution={1}
+              onEdit={() => setShowNewPokemonCard(false)}
+              onDelete={() => setShowNewPokemonCard(false)}
+            />
+          )}
+          <button onClick={handleAddPokemon}>Adicionar Pokémon</button>
+
       )}
     </div>
-  )
-}
+  );
+};
+
+export default PokemonCard;

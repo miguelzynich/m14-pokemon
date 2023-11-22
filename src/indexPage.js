@@ -1,52 +1,41 @@
-import React, { useEffect, useState } from 'react'
-import { PokemonCard } from './PokemonCard'
-import axios from 'axios'
-import './style.css'
+import React, { useState } from 'react';
+import PokemonEditForm from './Components/PokemonEditForm/PokemonEditForm';
 
 const IndexPage = () => {
-  const [pokemonList, setPokemonList] = useState([])
-  const [createPokemon, setCreatePokemon] = useState(false)
-  const [updateList, setUpdateList] = useState(0)
+  const [createPokemon, setCreatePokemon] = useState(false);
+  const [updateList, setUpdateList] = useState(0);
 
-  useEffect(() => {
-    const request = async () => {
-      const { data } = await axios.get('http://localhost:4000/')
-      setPokemonList(data)
-    }
-    setTimeout(request, 1500)
-  }, [updateList])
+  const handleAddPokemon = () => {
+    setCreatePokemon(true);
+  };
 
   return (
     <main>
-      <h1>Coleção pessoal de POKÉMONS</h1>
-      <button onClick={() => setCreatePokemon(true)}>
-        Adicionar Pokémon à sua coleção
-      </button>
-      {createPokemon && (
-        <div className="create-card">
-          <PokemonCard
-            createPokemon={createPokemon}
-            setCreatePokemon={setCreatePokemon}
-            updateList={updateList}
-            setUpdateList={setUpdateList}
-          />
-        </div>
-      )}
+      <h1>Lista de Pokémon</h1>
+
       <div className="pokemon-container">
-        {pokemonList.map(({ _id, name, imageUrl, evolution }) => (
-          <PokemonCard
-            key={_id}
-            id={_id}
-            name={name}
-            image={imageUrl}
-            evolution={evolution}
-            updateList={updateList}
-            setUpdateList={setUpdateList}
+        {}
+        {}
+      </div>
+
+      <div className="create-card">
+        {createPokemon && (
+          <PokemonEditForm
+            onCancel={() => setCreatePokemon(false)}
+            onSave={(data) => {
+              console.log('Novo Pokémon:', data);
+              setUpdateList(updateList + 1);
+              setCreatePokemon(false);
+            }}
           />
-        ))}
+        )}
+
+        <button className="button-add" onClick={handleAddPokemon}>
+          Adicionar Pokémon
+        </button>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default IndexPage
+export default IndexPage;

@@ -1,0 +1,36 @@
+.pokemon-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+    margin: auto;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #388659;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #002626;
+  }
+  
